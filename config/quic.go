@@ -5,7 +5,7 @@ import (
 	"crypto/tls"
 
 	"github.com/quic-go/quic-go"
-	"m7s.live/engine/v4/log"
+	"github.com/zls3434/m7s-engine/v4/log"
 )
 
 type QuicConfig interface {

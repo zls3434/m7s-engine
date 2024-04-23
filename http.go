@@ -8,11 +8,11 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/zls3434/m7s-engine/v4/codec"
+	"github.com/zls3434/m7s-engine/v4/config"
+	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
-	"m7s.live/engine/v4/codec"
-	"m7s.live/engine/v4/config"
-	"m7s.live/engine/v4/util"
 )
 
 const (

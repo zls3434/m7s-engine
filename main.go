@@ -1,4 +1,4 @@
-package engine // import "m7s.live/engine/v4"
+package engine // import "github.com/zls3434/m7s-engine/v4"
 
 import (
 	"bytes"
@@ -17,12 +17,12 @@ import (
 	"github.com/denisbrodbeck/machineid"
 	"github.com/google/uuid"
 	. "github.com/logrusorgru/aurora/v4"
+	"github.com/zls3434/m7s-engine/v4/lang"
+	"github.com/zls3434/m7s-engine/v4/log"
+	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/yaml.v3"
-	"m7s.live/engine/v4/lang"
-	"m7s.live/engine/v4/log"
-	"m7s.live/engine/v4/util"
 )
 
 var (

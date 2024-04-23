@@ -9,15 +9,16 @@ import (
 	"github.com/shirou/gopsutil/v3/disk"
 	"github.com/shirou/gopsutil/v3/mem"
 	"github.com/shirou/gopsutil/v3/net"
-	"m7s.live/engine/v4/util"
+	"github.com/zls3434/m7s-engine/v4/util"
 )
 
 var (
-	summary SummaryUtil
+	summary     SummaryUtil
 	lastSummary Summary
-	children util.Map[string, *Summary]
+	children    util.Map[string, *Summary]
 	collectLock sync.RWMutex
 )
+
 // ServerSummary 系统摘要定义
 type Summary struct {
 	Address string
@@ -48,6 +49,7 @@ type NetWorkInfo struct {
 	SentSpeed    uint64
 }
 type SummaryUtil Summary
+
 // Report 上报数据
 func (s *Summary) Report(slave *Summary) {
 	children.Set(slave.Address, slave)

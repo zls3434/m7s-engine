@@ -3,9 +3,9 @@ package engine
 import (
 	"encoding/json"
 
+	"github.com/zls3434/m7s-engine/v4/common"
+	"github.com/zls3434/m7s-engine/v4/config"
 	"go.uber.org/zap"
-	"m7s.live/engine/v4/common"
-	"m7s.live/engine/v4/config"
 )
 
 type Subscribers struct {

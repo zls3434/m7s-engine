@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/quic-go/quic-go"
+	"github.com/zls3434/m7s-engine/v4/log"
+	"github.com/zls3434/m7s-engine/v4/util"
 	"golang.org/x/net/websocket"
-	"m7s.live/engine/v4/log"
-	"m7s.live/engine/v4/util"
 )
 
 type PublishConfig interface {

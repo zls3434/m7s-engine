@@ -15,11 +15,11 @@ import (
 	"unsafe"
 
 	"github.com/mcuadros/go-defaults"
+	"github.com/zls3434/m7s-engine/v4/config"
+	"github.com/zls3434/m7s-engine/v4/log"
+	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
-	"m7s.live/engine/v4/config"
-	"m7s.live/engine/v4/log"
-	"m7s.live/engine/v4/util"
 )
 
 // InstallPlugin 安装插件，传入插件配置生成插件信息对象

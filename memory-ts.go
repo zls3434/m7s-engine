@@ -6,9 +6,9 @@ import (
 	"io"
 	"net"
 
-	"m7s.live/engine/v4/codec"
-	"m7s.live/engine/v4/codec/mpegts"
-	"m7s.live/engine/v4/util"
+	"github.com/zls3434/m7s-engine/v4/codec"
+	"github.com/zls3434/m7s-engine/v4/codec/mpegts"
+	"github.com/zls3434/m7s-engine/v4/util"
 )
 
 type MemoryTs struct {

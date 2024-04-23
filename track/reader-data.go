@@ -1,8 +1,8 @@
 package track
 
 import (
-	"m7s.live/engine/v4/common"
-	"m7s.live/engine/v4/util"
+	"github.com/zls3434/m7s-engine/v4/common"
+	"github.com/zls3434/m7s-engine/v4/util"
 )
 
 type RingReader[T any, F util.IDataFrame[T]] struct {

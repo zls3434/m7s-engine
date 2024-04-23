@@ -3,9 +3,9 @@ package common
 import (
 	"time"
 
-	"m7s.live/engine/v4/config"
-	"m7s.live/engine/v4/log"
-	"m7s.live/engine/v4/util"
+	"github.com/zls3434/m7s-engine/v4/config"
+	"github.com/zls3434/m7s-engine/v4/log"
+	"github.com/zls3434/m7s-engine/v4/util"
 )
 
 type IStream interface {

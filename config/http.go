@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/logrusorgru/aurora/v4"
+	"github.com/zls3434/m7s-engine/v4/log"
+	"github.com/zls3434/m7s-engine/v4/util"
 	"golang.org/x/sync/errgroup"
-	"m7s.live/engine/v4/log"
-	"m7s.live/engine/v4/util"
 )
 
 var _ HTTPConfig = (*HTTP)(nil)

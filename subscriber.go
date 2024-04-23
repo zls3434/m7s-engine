@@ -8,13 +8,13 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/zls3434/m7s-engine/v4/codec"
+	. "github.com/zls3434/m7s-engine/v4/common"
+	"github.com/zls3434/m7s-engine/v4/config"
+	"github.com/zls3434/m7s-engine/v4/track"
+	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"m7s.live/engine/v4/codec"
-	. "m7s.live/engine/v4/common"
-	"m7s.live/engine/v4/config"
-	"m7s.live/engine/v4/track"
-	"m7s.live/engine/v4/util"
 )
 
 const (
@@ -321,8 +321,8 @@ func (s *Subscriber) PlayBlock(subType byte) {
 		subMode, _ = strconv.Atoi(s.Args.Get(conf.SubModeArgName))
 	}
 	var initState = 0
-	var videoFrame, audioFrame ,lastSentAF, lastSentVF *AVFrame
-	defer func(){
+	var videoFrame, audioFrame, lastSentAF, lastSentVF *AVFrame
+	defer func() {
 		if lastSentVF != nil {
 			lastSentVF.ReaderLeave()
 		}

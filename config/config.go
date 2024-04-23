@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/quic-go/quic-go"
+	"github.com/zls3434/m7s-engine/v4/log"
 	"gopkg.in/yaml.v3"
-	"m7s.live/engine/v4/log"
 )
 
 type Config struct {
@@ -100,7 +100,7 @@ func (config *Config) MarshalJSON() ([]byte, error) {
 	return json.Marshal(config.propsMap)
 }
 
-func (config *Config) GetValue() any{
+func (config *Config) GetValue() any {
 	return config.Ptr.Interface()
 }
 

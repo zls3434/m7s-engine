@@ -5,11 +5,11 @@ import (
 	"time"
 
 	"github.com/pion/rtp"
+	"github.com/zls3434/m7s-engine/v4/codec"
+	"github.com/zls3434/m7s-engine/v4/common"
+	. "github.com/zls3434/m7s-engine/v4/common"
+	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
-	"m7s.live/engine/v4/codec"
-	"m7s.live/engine/v4/common"
-	. "m7s.live/engine/v4/common"
-	"m7s.live/engine/v4/util"
 )
 
 type Video struct {
@@ -21,9 +21,9 @@ type Video struct {
 	dtsEst      *util.DTSEstimator
 	lostFlag    bool // 是否丢帧
 	codec.SPSInfo
-	ParamaterSets  `json:"-" yaml:"-"`
-	SPS            []byte `json:"-" yaml:"-"`
-	PPS            []byte `json:"-" yaml:"-"`
+	ParamaterSets `json:"-" yaml:"-"`
+	SPS           []byte `json:"-" yaml:"-"`
+	PPS           []byte `json:"-" yaml:"-"`
 }
 
 func (v *Video) Attach() {
@@ -49,6 +49,7 @@ func (vt *Video) GetName() string {
 func (vt *Video) GetCodec() codec.VideoCodecID {
 	return vt.CodecID
 }
+
 // PlayFullAnnexB 订阅annex-b格式的流数据，每一个I帧增加sps、pps头
 // func (vt *Video) PlayFullAnnexB(ctx context.Context, onMedia func(net.Buffers) error) error {
 // 	for vr := vt.ReadRing(); ctx.Err() == nil; vr.MoveNext() {

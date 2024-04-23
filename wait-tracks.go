@@ -1,10 +1,10 @@
 package engine
 
 import (
-	"m7s.live/engine/v4/common"
-	. "m7s.live/engine/v4/common"
-	"m7s.live/engine/v4/track"
-	"m7s.live/engine/v4/util"
+	"github.com/zls3434/m7s-engine/v4/common"
+	. "github.com/zls3434/m7s-engine/v4/common"
+	"github.com/zls3434/m7s-engine/v4/track"
+	"github.com/zls3434/m7s-engine/v4/util"
 )
 
 type waitTrackNames []string
@@ -37,6 +37,7 @@ func (w waitTrackNames) InviteTrack(suber ISubscriber) {
 		InviteTrack(w[0], suber)
 	}
 }
+
 // Accept 检查名称是否在等待候选项中
 func (w *waitTrackNames) Accept(name string) bool {
 	if !w.Waiting() {

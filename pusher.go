@@ -4,8 +4,8 @@ import (
 	"io"
 	"time"
 
+	"github.com/zls3434/m7s-engine/v4/config"
 	"go.uber.org/zap"
-	"m7s.live/engine/v4/config"
 )
 
 type IPusher interface {
