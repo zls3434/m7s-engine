@@ -1,4 +1,4 @@
-module m7s.live/engine/v4
+module github.com/zls3434/m7s-engine/v4
 
 go 1.20
 
