@@ -16,7 +16,7 @@ import (
 
 	"github.com/denisbrodbeck/machineid"
 	"github.com/google/uuid"
-	. "github.com/logrusorgru/aurora/v4"
+	"github.com/logrusorgru/aurora/v4"
 	"github.com/zls3434/m7s-engine/v4/lang"
 	"github.com/zls3434/m7s-engine/v4/log"
 	"github.com/zls3434/m7s-engine/v4/util"
@@ -83,7 +83,7 @@ func Run(ctx context.Context, conf any) (err error) {
 		log.Error("create dir .m7s error:", err)
 		return
 	}
-	log.Info("Ⓜ starting engine:", Blink(Engine.Version))
+	log.Info("Ⓜ starting engine:", aurora.Blink(Engine.Version))
 	if ConfigRaw != nil {
 		if err = yaml.Unmarshal(ConfigRaw, &cg); err != nil {
 			log.Error("parsing yml error:", err)
@@ -163,9 +163,9 @@ func Run(ctx context.Context, conf any) (err error) {
 		version = ver
 	}
 	if EngineConfig.LogLang == "zh" {
-		log.Info("monibuca ", version, Green(" 启动成功"))
+		log.Info("monibuca ", version, aurora.Green(" 启动成功"))
 	} else {
-		log.Info("monibuca ", version, Green(" start success"))
+		log.Info("monibuca ", version, aurora.Green(" start success"))
 	}
 	var enabledPlugins, disabledPlugins []*Plugin
 	for _, plugin := range plugins {
@@ -181,7 +181,7 @@ func Run(ctx context.Context, conf any) (err error) {
 		fmt.Print("enabled plugins:")
 	}
 	for _, plugin := range enabledPlugins {
-		fmt.Print(Colorize(" "+plugin.Name+" ", BlackFg|GreenBg|BoldFm), " ")
+		fmt.Print(aurora.Colorize(" "+plugin.Name+" ", aurora.BlackFg|aurora.GreenBg|aurora.BoldFm), " ")
 	}
 	fmt.Println()
 	if EngineConfig.LogLang == "zh" {
@@ -190,22 +190,22 @@ func Run(ctx context.Context, conf any) (err error) {
 		fmt.Print("disabled plugins:")
 	}
 	for _, plugin := range disabledPlugins {
-		fmt.Print(Colorize(" "+plugin.Name+" ", BlackFg|RedBg|CrossedOutFm), " ")
+		fmt.Print(aurora.Colorize(" "+plugin.Name+" ", aurora.BlackFg|aurora.RedBg|aurora.CrossedOutFm), " ")
 	}
 	fmt.Println()
 	if EngineConfig.LogLang == "zh" {
-		fmt.Println(Cyan("🌏 官网地址: ").Bold(), Yellow("https://monibuca.com"))
-		fmt.Println(Cyan("🔥 启动工程: ").Bold(), Yellow("https://github.com/langhuihui/monibuca"))
-		fmt.Println(Cyan("📄 文档地址: ").Bold(), Yellow("https://monibuca.com/docs/index.html"))
-		fmt.Println(Cyan("🎞 视频教程: ").Bold(), Yellow("https://space.bilibili.com/328443019/channel/collectiondetail?sid=514619"))
-		fmt.Println(Cyan("🖥 远程界面: ").Bold(), Yellow("https://console.monibuca.com"))
-		fmt.Println(Yellow("关注公众号：不卡科技，获取更多信息"))
+		fmt.Println(aurora.Cyan("🌏 官网地址: ").Bold(), aurora.Yellow("https://monibuca.com"))
+		fmt.Println(aurora.Cyan("🔥 启动工程: ").Bold(), aurora.Yellow("https://github.com/langhuihui/monibuca"))
+		fmt.Println(aurora.Cyan("📄 文档地址: ").Bold(), aurora.Yellow("https://monibuca.com/docs/index.html"))
+		fmt.Println(aurora.Cyan("🎞 视频教程: ").Bold(), aurora.Yellow("https://space.bilibili.com/328443019/channel/collectiondetail?sid=514619"))
+		fmt.Println(aurora.Cyan("🖥 远程界面: ").Bold(), aurora.Yellow("https://console.monibuca.com"))
+		fmt.Println(aurora.Yellow("关注公众号：不卡科技，获取更多信息"))
 	} else {
-		fmt.Println(Cyan("🌏 WebSite: ").Bold(), Yellow("https://m7s.live"))
-		fmt.Println(Cyan("🔥 Github: ").Bold(), Yellow("https://github.com/langhuihui/monibuca"))
-		fmt.Println(Cyan("📄 Docs: ").Bold(), Yellow("https://docs.m7s.live"))
-		fmt.Println(Cyan("🎞 Videos: ").Bold(), Yellow("https://space.bilibili.com/328443019/channel/collectiondetail?sid=514619"))
-		fmt.Println(Cyan("🖥 Console: ").Bold(), Yellow("https://console.monibuca.com"))
+		fmt.Println(aurora.Cyan("🌏 WebSite: ").Bold(), aurora.Yellow("https://m7s.live"))
+		fmt.Println(aurora.Cyan("🔥 Github: ").Bold(), aurora.Yellow("https://github.com/langhuihui/monibuca"))
+		fmt.Println(aurora.Cyan("📄 Docs: ").Bold(), aurora.Yellow("https://docs.m7s.live"))
+		fmt.Println(aurora.Cyan("🎞 Videos: ").Bold(), aurora.Yellow("https://space.bilibili.com/328443019/channel/collectiondetail?sid=514619"))
+		fmt.Println(aurora.Cyan("🖥 Console: ").Bold(), aurora.Yellow("https://console.monibuca.com"))
 	}
 	rp := struct {
 		UUID     string `json:"uuid"`

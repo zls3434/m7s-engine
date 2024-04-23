@@ -2,7 +2,7 @@ package track
 
 import (
 	"github.com/zls3434/m7s-engine/v4/codec"
-	. "github.com/zls3434/m7s-engine/v4/common"
+	"github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/log"
 	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
@@ -15,14 +15,14 @@ type H265 struct {
 	VPS []byte `json:"-" yaml:"-"`
 }
 
-func NewH265(puber IPuber, stuff ...any) (vt *H265) {
+func NewH265(puber common.IPuber, stuff ...any) (vt *H265) {
 	vt = &H265{}
 	vt.Video.CodecID = codec.CodecID_H265
 	vt.SetStuff("h265", byte(96), uint32(90000), vt, stuff, puber)
 	if vt.BytesPool == nil {
 		vt.BytesPool = make(util.BytesPool, 17)
 	}
-	vt.ParamaterSets = make(ParamaterSets, 3)
+	vt.ParamaterSets = make(common.ParamaterSets, 3)
 	vt.nalulenSize = 4
 	vt.dtsEst = util.NewDTSEstimator()
 	return
@@ -97,7 +97,7 @@ func (vt *H265) WriteSequenceHead(head []byte) (err error) {
 	return
 }
 
-func (vt *H265) WriteRTPFrame(rtpItem *LIRTP) {
+func (vt *H265) WriteRTPFrame(rtpItem *common.LIRTP) {
 	defer func() {
 		err := recover()
 		if err != nil {
@@ -155,7 +155,7 @@ func (vt *H265) WriteRTPFrame(rtpItem *LIRTP) {
 	}
 }
 
-func (vt *H265) CompleteAVCC(rv *AVFrame) {
+func (vt *H265) CompleteAVCC(rv *common.AVFrame) {
 	mem := vt.BytesPool.Get(8)
 	b := mem.Value
 	if rv.IFrame {
@@ -190,7 +190,7 @@ func (vt *H265) CompleteAVCC(rv *AVFrame) {
 }
 
 // RTP格式补完
-func (vt *H265) CompleteRTP(value *AVFrame) {
+func (vt *H265) CompleteRTP(value *common.AVFrame) {
 	// H265打包： https://blog.csdn.net/fanyun_01/article/details/114234290
 	var out [][][]byte
 	if value.IFrame {

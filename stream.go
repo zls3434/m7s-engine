@@ -11,7 +11,7 @@ import (
 	"time"
 	"unsafe"
 
-	. "github.com/logrusorgru/aurora/v4"
+	"github.com/logrusorgru/aurora/v4"
 	"github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/config"
 	"github.com/zls3434/m7s-engine/v4/log"
@@ -268,7 +268,7 @@ func findOrCreateStream(streamPath string, waitTimeout time.Duration) (s *Stream
 	p := strings.Split(streamPath, "/")
 	pl := len(p)
 	if pl < 2 {
-		log.Warn(Red("Stream Path Format Error:"), streamPath)
+		log.Warn(aurora.Red("Stream Path Format Error:"), streamPath)
 		return nil, false
 	}
 	actual, loaded := Streams.LoadOrStore(streamPath, &Stream{
@@ -307,7 +307,7 @@ func (r *Stream) action(action StreamAction) (ok bool) {
 		r.SEHistory = append(r.SEHistory, event)
 		// 给Publisher状态变更的回调，方便进行远程拉流等操作
 		var stateEvent any
-		r.Info(Sprintf("%s%s%s", event.From.String(), Yellow("->"), next.String()), zap.String("action", action.String()))
+		r.Info(aurora.Sprintf("%s%s%s", event.From.String(), aurora.Yellow("->"), next.String()), zap.String("action", action.String()))
 		switch next {
 		case STATE_WAITPUBLISH:
 			stateEvent = SEwaitPublish{event, r.Publisher}

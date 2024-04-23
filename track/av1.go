@@ -1,12 +1,12 @@
 package track
 
 import (
+	"github.com/zls3434/m7s-engine/v4/common"
 	"time"
 
 	"github.com/bluenviron/gortsplib/v4/pkg/format/rtpav1"
 	"github.com/bluenviron/mediacommon/pkg/codecs/av1"
 	"github.com/zls3434/m7s-engine/v4/codec"
-	. "github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/log"
 	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
@@ -23,7 +23,7 @@ type AV1 struct {
 	refFrameType    map[byte]byte
 }
 
-func NewAV1(puber IPuber, stuff ...any) (vt *AV1) {
+func NewAV1(puber common.IPuber, stuff ...any) (vt *AV1) {
 	vt = &AV1{}
 	vt.Video.CodecID = codec.CodecID_AV1
 	vt.SetStuff("av1", byte(96), uint32(90000), vt, stuff, puber)
@@ -48,7 +48,7 @@ func (vt *AV1) WriteSequenceHead(head []byte) (err error) {
 	return
 }
 
-func (vt *AV1) WriteRTPFrame(rtpItem *LIRTP) {
+func (vt *AV1) WriteRTPFrame(rtpItem *common.LIRTP) {
 	defer func() {
 		err := recover()
 		if err != nil {
@@ -132,7 +132,7 @@ func (vt *AV1) writeAVCCFrame(ts uint32, r *util.BLLReader, frame *util.BLL) (er
 	return
 }
 
-func (vt *AV1) CompleteAVCC(rv *AVFrame) {
+func (vt *AV1) CompleteAVCC(rv *common.AVFrame) {
 	mem := vt.BytesPool.Get(5)
 	b := mem.Value
 	if rv.IFrame {
@@ -155,7 +155,7 @@ func (vt *AV1) CompleteAVCC(rv *AVFrame) {
 }
 
 // RTP格式补完
-func (vt *AV1) CompleteRTP(value *AVFrame) {
+func (vt *AV1) CompleteRTP(value *common.AVFrame) {
 	obus := vt.Value.AUList.ToBuffers()
 	// if vt.Value.IFrame {
 	// 	obus = append(net.Buffers{vt.ParamaterSets[0]}, obus...)
@@ -167,6 +167,6 @@ func (vt *AV1) CompleteRTP(value *AVFrame) {
 	}
 
 	for _, rtp := range rtps {
-		vt.Value.RTP.PushValue(RTPFrame{Packet: rtp})
+		vt.Value.RTP.PushValue(common.RTPFrame{Packet: rtp})
 	}
 }

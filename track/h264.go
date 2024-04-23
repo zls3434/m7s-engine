@@ -2,10 +2,10 @@ package track
 
 import (
 	"bytes"
+	"github.com/zls3434/m7s-engine/v4/common"
 	"time"
 
 	"github.com/zls3434/m7s-engine/v4/codec"
-	. "github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/log"
 	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
@@ -18,14 +18,14 @@ type H264 struct {
 	buf util.Buffer // rtp 包临时缓存,对于不规范的 rtp 包（sps 放到了 fua 中导致）需要缓存
 }
 
-func NewH264(puber IPuber, stuff ...any) (vt *H264) {
+func NewH264(puber common.IPuber, stuff ...any) (vt *H264) {
 	vt = &H264{}
 	vt.Video.CodecID = codec.CodecID_H264
 	vt.SetStuff("h264", byte(96), uint32(90000), vt, stuff, puber)
 	if vt.BytesPool == nil {
 		vt.BytesPool = make(util.BytesPool, 17)
 	}
-	vt.ParamaterSets = make(ParamaterSets, 2)
+	vt.ParamaterSets = make(common.ParamaterSets, 2)
 	vt.nalulenSize = 4
 	vt.dtsEst = util.NewDTSEstimator()
 	return
@@ -110,7 +110,7 @@ func (vt *H264) WriteSequenceHead(head []byte) (err error) {
 	return
 }
 
-func (vt *H264) WriteRTPFrame(rtpItem *LIRTP) {
+func (vt *H264) WriteRTPFrame(rtpItem *common.LIRTP) {
 	defer func() {
 		err := recover()
 		if err != nil {
@@ -197,7 +197,7 @@ func (vt *H264) WriteRTPFrame(rtpItem *LIRTP) {
 }
 
 // RTP格式补完
-func (vt *H264) CompleteRTP(value *AVFrame) {
+func (vt *H264) CompleteRTP(value *common.AVFrame) {
 	var out [][][]byte
 	if value.IFrame {
 		out = append(out, [][]byte{vt.SPS}, [][]byte{vt.PPS})

@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/zls3434/m7s-engine/v4/codec"
-	. "github.com/zls3434/m7s-engine/v4/common"
+	"github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/config"
 	"github.com/zls3434/m7s-engine/v4/track"
 	"github.com/zls3434/m7s-engine/v4/util"
@@ -34,22 +34,22 @@ type VideoDeConf []byte
 // AVCC 格式的序列帧
 type AudioDeConf []byte
 type AudioFrame struct {
-	*AVFrame
+	*common.AVFrame
 	*track.Audio
 	AbsTime uint32
 	PTS     uint32
 	DTS     uint32
 }
 type VideoFrame struct {
-	*AVFrame
+	*common.AVFrame
 	*track.Video
 	AbsTime uint32
 	PTS     uint32
 	DTS     uint32
 }
 type FLVFrame net.Buffers
-type AudioRTP RTPFrame
-type VideoRTP RTPFrame
+type AudioRTP common.RTPFrame
+type VideoRTP common.RTPFrame
 type HasAnnexB interface {
 	GetAnnexB() (r net.Buffers)
 }
@@ -99,7 +99,7 @@ func (v VideoFrame) WriteAnnexBTo(w io.Writer) (n int64, err error) {
 }
 
 type ISubscriber interface {
-	IIO
+	common.IIO
 	GetSubscriber() *Subscriber
 	IsPlaying() bool
 	PlayRaw()
@@ -141,7 +141,7 @@ func (s *Subscriber) SetIO(i any) {
 }
 func (s *Subscriber) OnEvent(event any) {
 	switch v := event.(type) {
-	case Track: //默认接受所有track
+	case common.Track: //默认接受所有track
 		s.AddTrack(v)
 	default:
 		s.IO.OnEvent(event)
@@ -155,7 +155,7 @@ func (s *Subscriber) CreateTrackReader(t *track.Media) (result *track.AVRingRead
 	return
 }
 
-func (s *Subscriber) AddTrack(t Track) bool {
+func (s *Subscriber) AddTrack(t common.Track) bool {
 	switch v := t.(type) {
 	case *track.Video:
 		if s.VideoReader != nil || !s.Config.SubVideo {
@@ -228,16 +228,16 @@ func (s *Subscriber) PlayBlock(subType byte) {
 		// s.Debug("sendAudioDecConf")
 		spesic.OnEvent(AudioDeConf(s.AudioReader.Track.SequenceHead))
 	}
-	var sendAudioFrame, sendVideoFrame func(*AVFrame)
+	var sendAudioFrame, sendVideoFrame func(*common.AVFrame)
 	switch subType {
 	case SUBTYPE_RAW:
-		sendVideoFrame = func(frame *AVFrame) {
+		sendVideoFrame = func(frame *common.AVFrame) {
 			if frame.AUList.ByteLength == 0 {
 				return
 			}
 			spesic.OnEvent(VideoFrame{frame, s.Video, s.VideoReader.AbsTime, s.VideoReader.GetPTS32(), s.VideoReader.GetDTS32()})
 		}
-		sendAudioFrame = func(frame *AVFrame) {
+		sendAudioFrame = func(frame *common.AVFrame) {
 			if frame.AUList.ByteLength == 0 {
 				return
 			}
@@ -247,10 +247,10 @@ func (s *Subscriber) PlayBlock(subType byte) {
 		}
 	case SUBTYPE_RTP:
 		var videoSeq, audioSeq uint16
-		sendVideoFrame = func(frame *AVFrame) {
+		sendVideoFrame = func(frame *common.AVFrame) {
 			// fmt.Println("v", frame.Sequence, frame.AbsTime, s.VideoReader.AbsTime, frame.IFrame)
 			delta := uint32(s.VideoReader.SkipTs * 90 / time.Millisecond)
-			frame.RTP.Range(func(vp RTPFrame) bool {
+			frame.RTP.Range(func(vp common.RTPFrame) bool {
 				videoSeq++
 				copy := *vp.Packet
 				vp.Packet = &copy
@@ -261,10 +261,10 @@ func (s *Subscriber) PlayBlock(subType byte) {
 			})
 		}
 
-		sendAudioFrame = func(frame *AVFrame) {
+		sendAudioFrame = func(frame *common.AVFrame) {
 			// fmt.Println("a", frame.Sequence, frame.Timestamp, s.AudioReader.AbsTime)
 			delta := uint32(s.AudioReader.SkipTs / time.Millisecond * time.Duration(s.AudioReader.Track.SampleRate) / 1000)
-			frame.RTP.Range(func(ap RTPFrame) bool {
+			frame.RTP.Range(func(ap common.RTPFrame) bool {
 				audioSeq++
 				copy := *ap.Packet
 				ap.Packet = &copy
@@ -296,7 +296,7 @@ func (s *Subscriber) PlayBlock(subType byte) {
 		sendAudioDecConf = func() {
 			sendFlvFrame(codec.FLV_TAG_TYPE_AUDIO, s.AudioReader.AbsTime, s.AudioReader.Track.SequenceHead)
 		}
-		sendVideoFrame = func(frame *AVFrame) {
+		sendVideoFrame = func(frame *common.AVFrame) {
 			// fmt.Println(frame.Sequence, s.VideoReader.AbsTime, s.VideoReader.Delay, frame.IFrame)
 			// b := util.Buffer(frame.AVCC.ToBytes()[5:])
 			// for b.CanRead() {
@@ -310,7 +310,7 @@ func (s *Subscriber) PlayBlock(subType byte) {
 			// }
 			sendFlvFrame(codec.FLV_TAG_TYPE_VIDEO, s.VideoReader.AbsTime, frame.AVCC.ToBuffers()...)
 		}
-		sendAudioFrame = func(frame *AVFrame) {
+		sendAudioFrame = func(frame *common.AVFrame) {
 			// fmt.Println(frame.Sequence, s.AudioReader.AbsTime, s.AudioReader.Delay)
 			sendFlvFrame(codec.FLV_TAG_TYPE_AUDIO, s.AudioReader.AbsTime, frame.AVCC.ToBuffers()...)
 		}
@@ -321,7 +321,7 @@ func (s *Subscriber) PlayBlock(subType byte) {
 		subMode, _ = strconv.Atoi(s.Args.Get(conf.SubModeArgName))
 	}
 	var initState = 0
-	var videoFrame, audioFrame, lastSentAF, lastSentVF *AVFrame
+	var videoFrame, audioFrame, lastSentAF, lastSentVF *common.AVFrame
 	defer func() {
 		if lastSentVF != nil {
 			lastSentVF.ReaderLeave()

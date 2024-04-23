@@ -2,7 +2,6 @@ package engine
 
 import (
 	"github.com/zls3434/m7s-engine/v4/common"
-	. "github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/track"
 	"github.com/zls3434/m7s-engine/v4/util"
 )
@@ -70,7 +69,7 @@ func (w *waitTracks) NeedWait() bool {
 }
 
 // Accept 有新的Track来到，检查是否可以不再需要等待了
-func (w *waitTracks) Accept(t Track) bool {
+func (w *waitTracks) Accept(t common.Track) bool {
 	suber := w.Promise.Value
 	switch t.(type) {
 	case *track.Audio:

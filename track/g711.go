@@ -1,17 +1,17 @@
 package track
 
 import (
+	"github.com/zls3434/m7s-engine/v4/common"
 	"io"
 
 	"github.com/zls3434/m7s-engine/v4/codec"
-	. "github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
 )
 
 var _ SpesificTrack = (*G711)(nil)
 
-func NewG711(puber IPuber, alaw bool, stuff ...any) (g711 *G711) {
+func NewG711(puber common.IPuber, alaw bool, stuff ...any) (g711 *G711) {
 	g711 = &G711{}
 	if alaw {
 		g711.Name = "pcma"
@@ -57,7 +57,7 @@ func (g711 *G711) WriteAVCC(ts uint32, frame *util.BLL) error {
 	return nil
 }
 
-func (g711 *G711) WriteRTPFrame(rtpItem *LIRTP) {
+func (g711 *G711) WriteRTPFrame(rtpItem *common.LIRTP) {
 	frame := &rtpItem.Value
 	g711.Value.RTP.Push(rtpItem)
 	if g711.SampleRate != 90000 {
@@ -67,7 +67,7 @@ func (g711 *G711) WriteRTPFrame(rtpItem *LIRTP) {
 	g711.Flush()
 }
 
-func (g711 *G711) CompleteRTP(value *AVFrame) {
+func (g711 *G711) CompleteRTP(value *common.AVFrame) {
 	if value.AUList.ByteLength > RTPMTU {
 		var packets [][][]byte
 		r := value.AUList.Next.Value.NewReader()

@@ -2,22 +2,22 @@ package track
 
 import (
 	"context"
+	"github.com/zls3434/m7s-engine/v4/common"
 	"sync"
 	"time"
 
-	. "github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/log"
 	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
 )
 
 type Data[T any] struct {
-	Base[T, *DataFrame[T]]
+	Base[T, *common.DataFrame[T]]
 	sync.Locker `json:"-" yaml:"-"` // 写入锁，可选，单一协程写入可以不加锁
 }
 
 func (dt *Data[T]) Init(n int) {
-	dt.Base.Init(n, NewDataFrame[T])
+	dt.Base.Init(n, common.NewDataFrame[T])
 }
 
 func (dt *Data[T]) Push(data T) {
@@ -33,7 +33,7 @@ func (dt *Data[T]) Push(data T) {
 	dt.Step()
 }
 
-func (d *Data[T]) Play(ctx context.Context, onData func(*DataFrame[T]) error) (err error) {
+func (d *Data[T]) Play(ctx context.Context, onData func(*common.DataFrame[T]) error) (err error) {
 	d.Debug("play data track")
 	reader := DataReader[T]{}
 	for err = reader.StartRead(d.Ring); err == nil; err = reader.ReadNext() {
@@ -51,7 +51,7 @@ func (d *Data[T]) Play(ctx context.Context, onData func(*DataFrame[T]) error) (e
 	return
 }
 
-func (d *Data[T]) Attach(s IStream) {
+func (d *Data[T]) Attach(s common.IStream) {
 	d.SetStuff(s)
 	if err := s.AddTrack(d).Await(); err != nil {
 		d.Error("attach data track failed", zap.Error(err))

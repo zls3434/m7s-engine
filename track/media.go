@@ -1,11 +1,11 @@
 package track
 
 import (
+	"github.com/zls3434/m7s-engine/v4/common"
 	"time"
 	"unsafe"
 
 	"github.com/pion/rtp"
-	. "github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/config"
 	"github.com/zls3434/m7s-engine/v4/log"
 	"github.com/zls3434/m7s-engine/v4/util"
@@ -60,10 +60,10 @@ func (p *流速控制) 控制流速(绝对时间戳 time.Duration, dts time.Dura
 }
 
 type SpesificTrack interface {
-	CompleteRTP(*AVFrame)
-	CompleteAVCC(*AVFrame)
+	CompleteRTP(*common.AVFrame)
+	CompleteAVCC(*common.AVFrame)
 	WriteSliceBytes([]byte)
-	WriteRTPFrame(*LIRTP)
+	WriteRTPFrame(*common.LIRTP)
 	generateTimestamp(uint32)
 	WriteSequenceHead([]byte) error
 	writeAVCCFrame(uint32, *util.BLLReader, *util.BLL) error
@@ -72,12 +72,12 @@ type SpesificTrack interface {
 }
 
 type IDRingList struct {
-	IDRList     util.List[*util.Ring[*AVFrame]]
-	IDRing      *util.Ring[*AVFrame]
-	HistoryRing *util.Ring[*AVFrame]
+	IDRList     util.List[*util.Ring[*common.AVFrame]]
+	IDRing      *util.Ring[*common.AVFrame]
+	HistoryRing *util.Ring[*common.AVFrame]
 }
 
-func (p *IDRingList) AddIDR(IDRing *util.Ring[*AVFrame]) {
+func (p *IDRingList) AddIDR(IDRing *util.Ring[*common.AVFrame]) {
 	p.IDRList.PushValue(IDRing)
 	p.IDRing = IDRing
 }
@@ -89,15 +89,15 @@ func (p *IDRingList) ShiftIDR() {
 
 // Media 基础媒体Track类
 type Media struct {
-	Base[any, *AVFrame]
+	Base[any, *common.AVFrame]
 	BufferTime      time.Duration //发布者配置中的缓冲时间（时光回溯）
 	PayloadType     byte
 	IDRingList      `json:"-" yaml:"-"` //最近的关键帧位置，首屏渲染
 	SSRC            uint32
 	SampleRate      uint32
-	BytesPool       util.BytesPool      `json:"-" yaml:"-"`
-	RtpPool         util.Pool[RTPFrame] `json:"-" yaml:"-"`
-	SequenceHead    []byte              `json:"-" yaml:"-"` //H264(SPS、PPS) H265(VPS、SPS、PPS) AAC(config)
+	BytesPool       util.BytesPool             `json:"-" yaml:"-"`
+	RtpPool         util.Pool[common.RTPFrame] `json:"-" yaml:"-"`
+	SequenceHead    []byte                     `json:"-" yaml:"-"` //H264(SPS、PPS) H265(VPS、SPS、PPS) AAC(config)
 	SequenceHeadSeq int
 	RTPDemuxer
 	SpesificTrack  `json:"-" yaml:"-"`
@@ -116,7 +116,7 @@ func (av *Media) GetFromPool(b util.IBytes) (item util.LIBP) {
 	return
 }
 
-func (av *Media) GetRTPFromPool() (result *LIRTP) {
+func (av *Media) GetRTPFromPool() (result *common.LIRTP) {
 	result = av.RtpPool.Get()
 	if result.Value.Packet == nil {
 		result.Value.Packet = &rtp.Packet{}
@@ -154,11 +154,11 @@ func (av *Media) SetStuff(stuff ...any) {
 	// 代表发布者已经离线，该Track成为遗留Track，等待下一任发布者接续发布
 	for _, s := range stuff {
 		switch v := s.(type) {
-		case IPuber:
+		case common.IPuber:
 			pubConf := v.GetConfig()
 			av.BufferTime = pubConf.BufferTime
 			av.Base.SetStuff(v)
-			av.Init(256, NewAVFrame)
+			av.Init(256, common.NewAVFrame)
 			av.SSRC = uint32(uintptr(unsafe.Pointer(av)))
 			av.等待上限 = pubConf.SpeedLimit
 		case uint32:
@@ -181,10 +181,10 @@ func (av *Media) LastWriteTime() time.Time {
 	return av.LastValue.WriteTime
 }
 
-func (av *Media) CurrentFrame() *AVFrame {
+func (av *Media) CurrentFrame() *common.AVFrame {
 	return av.Value
 }
-func (av *Media) PreFrame() *AVFrame {
+func (av *Media) PreFrame() *common.AVFrame {
 	return av.LastValue
 }
 
@@ -230,8 +230,8 @@ func (av *Media) Flush() {
 	curValue, preValue, nextValue := av.Value, av.LastValue, av.Next()
 	useDts := curValue.Timestamp == 0
 	originDTS := curValue.DTS
-	if av.State == TrackStateOffline {
-		av.State = TrackStateOnline
+	if av.State == common.TrackStateOffline {
+		av.State = common.TrackStateOnline
 		if useDts {
 			av.deltaTs = curValue.DTS - preValue.DTS
 		} else {

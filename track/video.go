@@ -7,7 +7,6 @@ import (
 	"github.com/pion/rtp"
 	"github.com/zls3434/m7s-engine/v4/codec"
 	"github.com/zls3434/m7s-engine/v4/common"
-	. "github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
 )
@@ -21,9 +20,9 @@ type Video struct {
 	dtsEst      *util.DTSEstimator
 	lostFlag    bool // 是否丢帧
 	codec.SPSInfo
-	ParamaterSets `json:"-" yaml:"-"`
-	SPS           []byte `json:"-" yaml:"-"`
-	PPS           []byte `json:"-" yaml:"-"`
+	common.ParamaterSets `json:"-" yaml:"-"`
+	SPS                  []byte `json:"-" yaml:"-"`
+	PPS                  []byte `json:"-" yaml:"-"`
 }
 
 func (v *Video) Attach() {
@@ -194,12 +193,12 @@ func (vt *Video) insertDCRtp() {
 		packet.SSRC = vt.SSRC
 		packet.Timestamp = uint32(vt.Value.PTS)
 		packet.Marker = false
-		head.InsertBeforeValue(RTPFrame{Packet: &packet})
+		head.InsertBeforeValue(common.RTPFrame{Packet: &packet})
 	}
 }
 
 func (vt *Video) generateTimestamp(ts uint32) {
-	if vt.State == TrackStateOffline {
+	if vt.State == common.TrackStateOffline {
 		vt.dtsEst = util.NewDTSEstimator()
 	}
 	vt.Value.PTS = time.Duration(ts)
@@ -210,7 +209,7 @@ func (vt *Video) SetLostFlag() {
 	vt.lostFlag = true
 }
 
-func (vt *Video) CompleteAVCC(rv *AVFrame) {
+func (vt *Video) CompleteAVCC(rv *common.AVFrame) {
 	mem := vt.BytesPool.Get(5)
 	b := mem.Value
 	if rv.IFrame {

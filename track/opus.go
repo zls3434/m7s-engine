@@ -3,13 +3,13 @@ package track
 import (
 	"github.com/pkg/errors"
 	"github.com/zls3434/m7s-engine/v4/codec"
-	. "github.com/zls3434/m7s-engine/v4/common"
+	"github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/util"
 )
 
 var _ SpesificTrack = (*Opus)(nil)
 
-func NewOpus(puber IPuber, stuff ...any) (opus *Opus) {
+func NewOpus(puber common.IPuber, stuff ...any) (opus *Opus) {
 	opus = &Opus{}
 	opus.CodecID = codec.CodecID_OPUS
 	opus.SampleSize = 16
@@ -30,7 +30,7 @@ func (opus *Opus) WriteAVCC(ts uint32, frame *util.BLL) error {
 	return errors.New("opus not support WriteAVCC")
 }
 
-func (opus *Opus) WriteRTPFrame(rtpItem *LIRTP) {
+func (opus *Opus) WriteRTPFrame(rtpItem *common.LIRTP) {
 	frame := &rtpItem.Value
 	opus.Value.RTP.Push(rtpItem)
 	if opus.SampleRate != 90000 {
@@ -40,7 +40,7 @@ func (opus *Opus) WriteRTPFrame(rtpItem *LIRTP) {
 	opus.Flush()
 }
 
-func (opus *Opus) CompleteRTP(value *AVFrame) {
+func (opus *Opus) CompleteRTP(value *common.AVFrame) {
 	if value.AUList.ByteLength > RTPMTU {
 		var packets [][][]byte
 		r := value.AUList.Next.Value.NewReader()

@@ -2,7 +2,7 @@ package track
 
 import (
 	"github.com/zls3434/m7s-engine/v4/codec"
-	. "github.com/zls3434/m7s-engine/v4/common"
+	"github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
 )
@@ -78,7 +78,7 @@ func (av *Audio) WriteAVCC(ts uint32, frame *util.BLL) {
 	av.Flush()
 }
 
-func (a *Audio) CompleteAVCC(value *AVFrame) {
+func (a *Audio) CompleteAVCC(value *common.AVFrame) {
 	value.AVCC.Push(a.BytesPool.GetShell(a.AVCCHead))
 	value.AUList.Range(func(v *util.BLL) bool {
 		v.Range(func(v util.Buffer) bool {
@@ -89,7 +89,7 @@ func (a *Audio) CompleteAVCC(value *AVFrame) {
 	})
 }
 
-func (a *Audio) CompleteRTP(value *AVFrame) {
+func (a *Audio) CompleteRTP(value *common.AVFrame) {
 	a.PacketizeRTP(value.AUList.ToList()...)
 }
 

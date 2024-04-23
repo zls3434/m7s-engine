@@ -2,19 +2,19 @@ package track
 
 import (
 	"fmt"
+	"github.com/zls3434/m7s-engine/v4/common"
 	"io"
 	"net"
 
 	"github.com/bluenviron/mediacommon/pkg/bits"
 	"github.com/zls3434/m7s-engine/v4/codec"
-	. "github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
 )
 
 var _ SpesificTrack = (*AAC)(nil)
 
-func NewAAC(puber IPuber, stuff ...any) (aac *AAC) {
+func NewAAC(puber common.IPuber, stuff ...any) (aac *AAC) {
 	aac = &AAC{
 		Mode: 2,
 	}
@@ -69,7 +69,7 @@ func (aac *AAC) WriteADTS(ts uint32, b util.IBytes) {
 }
 
 // https://datatracker.ietf.org/doc/html/rfc3640#section-3.2.1
-func (aac *AAC) WriteRTPFrame(rtpItem *LIRTP) {
+func (aac *AAC) WriteRTPFrame(rtpItem *common.LIRTP) {
 	aac.Value.RTP.Push(rtpItem)
 	frame := &rtpItem.Value
 	if len(frame.Payload) < 2 {
@@ -194,7 +194,7 @@ func (aac *AAC) WriteAVCC(ts uint32, frame *util.BLL) error {
 	return nil
 }
 
-func (aac *AAC) CompleteRTP(value *AVFrame) {
+func (aac *AAC) CompleteRTP(value *common.AVFrame) {
 	l := value.AUList.ByteLength
 	//AU_HEADER_LENGTH,因为单位是bit, 除以8就是auHeader的字节长度；又因为单个auheader字节长度2字节，所以再除以2就是auheader的个数。
 	auHeaderLen := []byte{0x00, 0x10, (byte)((l & 0x1fe0) >> 5), (byte)((l & 0x1f) << 3)} // 3 = 16-13, 5 = 8-3

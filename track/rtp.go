@@ -1,10 +1,10 @@
 package track
 
 import (
+	"github.com/zls3434/m7s-engine/v4/common"
 	"time"
 
 	"github.com/pion/rtp"
-	. "github.com/zls3434/m7s-engine/v4/common"
 	"github.com/zls3434/m7s-engine/v4/util"
 	"go.uber.org/zap"
 )
@@ -13,7 +13,7 @@ const RTPMTU = 1400
 
 // WriteRTPPack 写入已反序列化的RTP包，已经排序过了的
 func (av *Media) WriteRTPPack(p *rtp.Packet) {
-	var frame RTPFrame
+	var frame common.RTPFrame
 	p.SSRC = av.SSRC
 	p.Padding = false
 	p.PaddingSize = 0
@@ -28,7 +28,7 @@ func (av *Media) WriteRTPPack(p *rtp.Packet) {
 }
 
 // WriteRTPFrame 写入未反序列化的RTP包, 未排序的
-func (av *Media) WriteRTP(raw *LIRTP) {
+func (av *Media) WriteRTP(raw *common.LIRTP) {
 	for frame := av.recorderRTP(raw); frame != nil; frame = av.nextRTPFrame() {
 		frame.Value.SSRC = av.SSRC
 		av.Value.BytesIn += len(frame.Value.Payload) + 12
@@ -46,7 +46,7 @@ func (av *Media) WriteRTP(raw *LIRTP) {
 // https://www.cnblogs.com/moonwalk/p/15903760.html
 // Packetize packetizes the payload of an RTP packet and returns one or more RTP packets
 func (av *Media) PacketizeRTP(payloads ...[][]byte) {
-	var rtpItem *LIRTP
+	var rtpItem *common.LIRTP
 	for _, pp := range payloads {
 		rtpItem = av.GetRTPFromPool()
 		packet := &rtpItem.Value
@@ -78,11 +78,11 @@ func (av *Media) PacketizeRTP(payloads ...[][]byte) {
 type RTPDemuxer struct {
 	lastSeq  uint16 //上一个rtp包的序号
 	lastSeq2 uint16 //上上一个rtp包的序号
-	乱序重排     util.RTPReorder[*LIRTP]
+	乱序重排     util.RTPReorder[*common.LIRTP]
 }
 
 // 获取缓存中下一个rtpFrame
-func (av *RTPDemuxer) nextRTPFrame() (frame *LIRTP) {
+func (av *RTPDemuxer) nextRTPFrame() (frame *common.LIRTP) {
 	frame = av.乱序重排.Pop()
 	if frame == nil {
 		return
@@ -93,7 +93,7 @@ func (av *RTPDemuxer) nextRTPFrame() (frame *LIRTP) {
 }
 
 // 对RTP包乱序重排
-func (av *RTPDemuxer) recorderRTP(item *LIRTP) (frame *LIRTP) {
+func (av *RTPDemuxer) recorderRTP(item *common.LIRTP) (frame *common.LIRTP) {
 	frame = av.乱序重排.Push(item.Value.SequenceNumber, item)
 	if frame == nil {
 		return
